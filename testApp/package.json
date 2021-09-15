@@ -10,16 +10,10 @@
     "lint": "eslint ."
   },
   "dependencies": {
-    "buffer": "^6.0.3",
-    "essy-fft": "^1.0.3",
-    "fft-js": "0.0.12",
     "react": "17.0.2",
     "react-native": "0.65.1",
-    "react-native-live-audio-stream": "^1.1.1",
-    "react-native-microphone-stream": "git://github.com/chadsmith/react-native-microphone-stream.git",
     "react-native-reanimated": "^2.3.0-alpha.3",
-    "react-native-sound-level": "^1.1.5",
-    "typefft": "0.0.2"
+    "react-native-sound-level": "^1.1.5"
   },
   "devDependencies": {
     "@babel/core": "^7.12.9",
