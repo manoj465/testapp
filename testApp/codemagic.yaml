@@ -25,7 +25,7 @@ workflows:
         - tag
         - pull_request
       branch_patterns:
-        - pattern: develop
+        - pattern: master
           include: true
           source: true
     scripts:
