@@ -1,20 +1,14 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect } from 'react';
 import {
-  SafeAreaView, StatusBar, Text,
-  useColorScheme,
-  View,
-  Button
+  Button, SafeAreaView, StatusBar, Text,
+  useColorScheme
 } from 'react-native';
 import Animated, {
-  useAnimatedStyle, useSharedValue, withTiming,
-  Easing,
+  Easing, useAnimatedStyle, useSharedValue, withTiming
 } from 'react-native-reanimated';
+import RNSoundLevel from 'react-native-sound-level';
 import { Colors } from 'react-native/Libraries/NewAppScreen';
-import MicStream from 'react-native-microphone-stream';
-import LiveAudioStream from 'react-native-live-audio-stream';
-import { Buffer } from 'buffer';
-import RNSoundLevel from 'react-native-sound-level'
-
+/*  */
 const App = () => {
   const isDarkMode = useColorScheme() === 'dark';
   let soundArray = [0, 0, 0, 0, 0]
