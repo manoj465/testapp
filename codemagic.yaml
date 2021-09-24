@@ -7,8 +7,8 @@ workflows:
       vars:
         # Env vars for automatic iOS code signing
         # See the following link for more details - https://docs.codemagic.io/code-signing-yaml/signing-ios/
-        XCODE_WORKSPACE: "YOUR_WORKSPACE_NAME.xcworkspace" # <-- Put the name of your Xcode workspace here
-        XCODE_SCHEME: "YOUR_SCHEME_NAME" # <-- Put the name of your Xcode scheme here
+        XCODE_WORKSPACE: "testApp.xcodeproj" # <-- Put the name of your Xcode workspace here
+        XCODE_SCHEME: "testApp.xcscheme" # <-- Put the name of your Xcode scheme here
       node: latest
       xcode: latest
       cocoapods: default
@@ -36,8 +36,7 @@ workflows:
                     xcode-project use-profiles --warn-only
       - name: Build ipa for distribution
         script: |
-                    xcode-project build-ipa --workspace "$FCI_BUILD_DIR/ios/$XCODE_WORKSPACE" --scheme "$XCODE_SCHEME" \
-                    CODE_SIGN_IDENTITY="" CODE_SIGNING_REQUIRED=NO CODE_SIGNING_ALLOWED=NO 
+                    xcode-project build-ipa --project "$FCI_BUILD_DIR/ios/$XCODE_WORKSPACE" --scheme "$XCODE_SCHEME"
     artifacts:
       - build/ios/ipa/*.ipa
       - /tmp/xcodebuild_logs/*.log
