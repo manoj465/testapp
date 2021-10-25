@@ -1,115 +1,81 @@
 import React, { useEffect } from 'react';
 import {
-  Button, SafeAreaView, StatusBar, Text,
-  useColorScheme
+  Button,
+  SafeAreaView,
+  StatusBar,
+  Text,
+  useColorScheme,
+  View,
+  DeviceEventEmitter
 } from 'react-native';
 import Animated, {
-  Easing, useAnimatedStyle, useSharedValue, withTiming
+  Easing,
+  useAnimatedStyle,
+  useSharedValue,
+  withTiming,
 } from 'react-native-reanimated';
-import RNSoundLevel from 'react-native-sound-level';
 import { Colors } from 'react-native/Libraries/NewAppScreen';
+import RNEsptouch from 'react-native-esptouch2';
+import Permissions, { check, PERMISSIONS, RESULTS } from 'react-native-permissions';
 /*  */
+
+
+
 const App = () => {
-  const isDarkMode = useColorScheme() === 'dark';
-  let soundArray = [0, 0, 0, 0, 0]
-  let soundGapArray = [0, 0, 0, 0, 0]
-  let mean = 0
-  let lastMean = 0
-  let colors = [16711680]
-  const width = useSharedValue(50);
-
-  const backgroundStyle = {
-    backgroundColor: isDarkMode ? Colors.darker : Colors.lighter,
-  };
-
-  const style = useAnimatedStyle(() => {
-    return {
-      width: withTiming(width.value, {
-        duration: 300,
-        easing: Easing.bezier(0.25, 0.1, 0.25, 1),
-      }),
-    };
-  }, []);
 
 
 
-  RNSoundLevel.onNewFrame = (data) => {
-    // see "Returned data" section below
-    let value = 100 + data.value
-    //console.log(-data.value)
-    if (soundArray.length < 5) {
-      soundArray.push(value)
-    }
-    else {
-      soundArray[0] = soundArray[1]
-      soundArray[1] = soundArray[2]
-      soundArray[2] = soundArray[3]
-      soundArray[3] = soundArray[4]
-      soundArray[4] = value
-    }
-    mean = (soundArray[0] + soundArray[1] + soundArray[2] + soundArray[3] + soundArray[4]) / 5
-    let temp = lastMean - value
-
-    if (soundGapArray.length < 5) {
-      soundGapArray.push(temp)
-    }
-    else {
-      soundGapArray[0] = soundGapArray[1]
-      soundGapArray[1] = soundGapArray[2]
-      soundGapArray[2] = soundGapArray[3]
-      soundGapArray[3] = soundGapArray[4]
-      soundGapArray[4] = temp
-    }
-    let soundGapMean = (soundGapArray[0] + soundGapArray[1] + soundGapArray[2] + soundGapArray[3] + soundGapArray[4]) / 5
-
-
-
-    let temp2 = soundGapMean - temp
-
-
-    if (temp2 < 0)
-      temp2 = -temp2
-
-    //console.log("= " + value + " > " + mean)
-
-
-    if (value > mean) {
-      console.log(value - mean)
-      //change color on this beat
-      width.value = 1000 * ((value - mean) / 100)
-    }
-    else {
-      width.value = 300 * (value / 100)
-    }
-    lastMean = mean
-
-
-
+  onPress = () => {
+    console.log("now setting up ESPtouch")
+    RNEsptouch.startSmartConfig("Ioplmkjnb@1", 1/* 1: broadcast;	0: multicast */).then((res) => {
+      if (res.code == 200) {
+        // ESPTouch success
+        console.log(res)
+      } else {
+        // ESPTouch failed
+        console.info(res.msg)
+      }
+    })
   }
 
 
-
+  requestPermission = () => {
+    console.log("requesting permission")
+    //check(PERMISSIONS.ANDROID.ACCESS_FINE_LOCATION)
+    Permissions.request(PERMISSIONS.ANDROID.ACCESS_FINE_LOCATION)
+      .then(response => {
+        //returns once the user has chosen to 'allow' or to 'not allow' access
+        //response is one of: 'authorized', 'denied', 'restricted', or 'undetermined'
+        console.log(response)
+      });
+  };
 
 
   useEffect(() => {
-    console.log("===============================")
-    RNSoundLevel.start()
+    requestPermission();
 
+    RNEsptouch.initESPTouch();
     return () => {
-      RNSoundLevel.stop()
+      RNEsptouch.finish();
+
     }
   }, [])
+
+
   return (
-    <SafeAreaView style={backgroundStyle}>
-      <StatusBar barStyle={isDarkMode ? 'light-content' : 'dark-content'} />
-      <Text>React native test App</Text>
+    <View style={[{ flex: 1 }]}>
+      <StatusBar />
+      <Text style={{ flex: 0.5 }}>React native test App</Text>
+      <Button
+        title="Button"
+        style={{ marginTop: 10 }}
+        onPress={() => {
+          onPress()
+        }}
+      />
+    </View>
+  )
+}
 
-
-      <Animated.View style={[{ height: 100, marginTop: 100, backgroundColor: "red" }, style]}></Animated.View>
-
-      <Button title="Button" style={{ marginTop: 10 }} onPress={() => (width.value = Math.random() * 300)} />
-    </SafeAreaView>
-  );
-};
 
 export default App;
